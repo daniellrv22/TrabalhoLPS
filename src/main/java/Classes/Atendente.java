@@ -15,7 +15,7 @@ import java.text.ParseException;
  * @author Pichau
  */
 public class Atendente {
-    private String tabelaNome = "tbl_atendente";
+    
     private int id;
     private String nome;
     private String cpf;
@@ -83,53 +83,6 @@ public class Atendente {
         this.id = id;
     }
     
-    public ResultSet index() throws SQLException {
-        PreparedStatement ps = Conexao.connection().prepareStatement(String.format("SELECT * FROM %s", tabelaNome));
-        ResultSet rs = ps.executeQuery();
-
-        return rs;
-    }
     
-    public ResultSet deletar(Integer id) throws SQLException {
-        PreparedStatement ps = Conexao.connection().prepareStatement("DELETE FROM tbl_atendente WHERE id_atendente = ?");
-        ps.setInt(1, id);
-
-        ps.executeUpdate();
-        return null;
-    }
-    
-    public int editar(Atendente atendente) throws SQLException, ParseException {
-        PreparedStatement ps = null;
-        System.out.println("atendente" + atendente.getId( ));
-        try {
-            if (atendente.getId() == 0) {
-                ps = Conexao.connection().prepareStatement("INSERT INTO tbl_atendente (nome, cpf, endereco, idade, salario) VALUES(?, ?, ?, ?, ?)");
-                ps.setString(1, atendente.getNome());
-                ps.setString(2, atendente.getCpf());
-
-                ps.setString(3, atendente.getEndereco());
-                ps.setInt(4, atendente.getIdade());
-                ps.setFloat(5, atendente.getSalario());
-            } else {
-                ps = Conexao.connection().prepareStatement("UPDATE tbl_atendente SET nome = ?, cpf = ?, endereco = ?, idade = ?, salario = ? WHERE id_atendente = ?");
-                ps.setString(1, atendente.getNome());
-                ps.setString(2, atendente.getCpf());
-                ps.setString(3, atendente.getEndereco());
-                ps.setInt(4, atendente.getIdade());
-                ps.setFloat(5, atendente.getSalario());
-                ps.setInt(6, atendente.getId());
-            }
-
-        } catch (SQLException e) {
-            System.out.println(e + "error");
-        }
-        ps.executeUpdate();
-        ResultSet rs = ps.getGeneratedKeys();
-        int idx = 0;
-        if (rs.next()) {
-            idx = rs.getInt(1);
-        }
-        return idx;
-    }
     
 }

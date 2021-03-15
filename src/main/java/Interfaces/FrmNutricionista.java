@@ -6,8 +6,7 @@
 package Interfaces;
 
 
-
-import Classes.Atendente;
+import dao.NutricionistaDAO;
 import Classes.Nutricionista;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -73,7 +72,7 @@ public class FrmNutricionista extends javax.swing.JFrame {
     
     public void carregarTabela() throws SQLException{
           
-         Nutricionista a = new Nutricionista();
+         NutricionistaDAO a = new NutricionistaDAO();
          ResultSet data = a.index();
           
          DefaultTableModel model = (DefaultTableModel) this.tblNutricionista.getModel();
@@ -133,7 +132,7 @@ public class FrmNutricionista extends javax.swing.JFrame {
       public void add(Nutricionista nutricionista) throws SQLException, ParseException {
         DefaultTableModel model = (DefaultTableModel) this.tblNutricionista.getModel();
         nutricionista.setId(0);
-        int insertedId = nutricionista.editar(nutricionista);
+        int insertedId = NutricionistaDAO.getInstance().editar(nutricionista);
         model.addRow(new Object[]{insertedId,nutricionista.getNome(), nutricionista.getCpf(), nutricionista.getEndereco(), nutricionista.getIdade(), nutricionista.getSalario()});
     }
       
@@ -147,7 +146,7 @@ public class FrmNutricionista extends javax.swing.JFrame {
         aux++;
         nutricionista.setId(aux);
         System.out.println("auxiliar" + aux);
-        nutricionista.editar(nutricionista);
+        NutricionistaDAO.getInstance().editar(nutricionista);
   
     }
       public void delete(int row) throws SQLException {
@@ -166,7 +165,7 @@ public class FrmNutricionista extends javax.swing.JFrame {
             DefaultTableModel model = (DefaultTableModel) this.tblNutricionista.getModel();
             //int x = Integer.parseInt((String) this.tblAtendente.getValueAt(row, 0));
             
-            nutricionista.deletar((Integer) this.tblNutricionista.getValueAt(row, 0));
+            NutricionistaDAO.getInstance().deletar((Integer) this.tblNutricionista.getValueAt(row, 0));
             int[] rows = tblNutricionista.getSelectedRows();
             for (int i = 0; i < rows.length; i++) {
                 model.removeRow(rows[i] - i);
@@ -461,7 +460,7 @@ public class FrmNutricionista extends javax.swing.JFrame {
                
                 delete(row);
             } catch (SQLException ex) {
-                Logger.getLogger(Atendente.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Nutricionista.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             showMessageDialog(this, "Nenhum registro selecionado");

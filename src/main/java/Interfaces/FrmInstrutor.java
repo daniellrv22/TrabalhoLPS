@@ -7,7 +7,7 @@ package Interfaces;
 
 
 
-import Classes.Atendente;
+import dao.InstrutorDAO;
 import Classes.Instrutor;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -72,7 +72,7 @@ public class FrmInstrutor extends javax.swing.JFrame {
     }
     public void carregarTabela() throws SQLException{
           
-         Instrutor a = new Instrutor();
+         InstrutorDAO a = new InstrutorDAO();
          ResultSet data = a.index();
           
          DefaultTableModel model = (DefaultTableModel) this.tblInstrutor.getModel();
@@ -131,7 +131,7 @@ public class FrmInstrutor extends javax.swing.JFrame {
       public void add(Instrutor instrutor) throws SQLException, ParseException {
         DefaultTableModel model = (DefaultTableModel) this.tblInstrutor.getModel();
         instrutor.setId(0);
-        int insertedId = instrutor.editar(instrutor);
+        int insertedId = InstrutorDAO.getInstance().editar(instrutor);
         model.addRow(new Object[]{insertedId,instrutor.getNome(), instrutor.getCpf(), instrutor.getEndereco(), instrutor.getIdade(), instrutor.getSalario()});
     }
       
@@ -145,7 +145,7 @@ public class FrmInstrutor extends javax.swing.JFrame {
         aux++;
         instrutor.setId(aux);
         System.out.println("auxiliar" + aux);
-        instrutor.editar(instrutor);
+        InstrutorDAO.getInstance().editar(instrutor);
   
     }
       public void delete(int row) throws SQLException {
@@ -164,7 +164,7 @@ public class FrmInstrutor extends javax.swing.JFrame {
             DefaultTableModel model = (DefaultTableModel) this.tblInstrutor.getModel();
             //int x = Integer.parseInt((String) this.tblAtendente.getValueAt(row, 0));
             
-            instrutor.deletar((Integer) this.tblInstrutor.getValueAt(row, 0));
+            InstrutorDAO.getInstance().deletar((Integer) this.tblInstrutor.getValueAt(row, 0));
             int[] rows = tblInstrutor.getSelectedRows();
             for (int i = 0; i < rows.length; i++) {
                 model.removeRow(rows[i] - i);
@@ -459,7 +459,7 @@ public class FrmInstrutor extends javax.swing.JFrame {
                
                 delete(row);
             } catch (SQLException ex) {
-                Logger.getLogger(Atendente.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Instrutor.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             showMessageDialog(this, "Nenhum registro selecionado");

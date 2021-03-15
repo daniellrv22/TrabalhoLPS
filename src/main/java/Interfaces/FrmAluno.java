@@ -5,9 +5,8 @@
  */
 package Interfaces;
 
+import dao.AlunoDAO;
 import Classes.Aluno;
-import Classes.Conexao;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -73,7 +72,7 @@ public class FrmAluno extends javax.swing.JFrame {
 
       public void carregarTabela() throws SQLException{
           
-         Aluno a = new Aluno();
+         AlunoDAO a = new AlunoDAO();
          ResultSet data = a.index();
           
          DefaultTableModel model = (DefaultTableModel) this.tblAluno.getModel();
@@ -133,7 +132,7 @@ public class FrmAluno extends javax.swing.JFrame {
       public void add(Aluno aluno) throws SQLException, ParseException {
         DefaultTableModel model = (DefaultTableModel) this.tblAluno.getModel();
         aluno.setId(0);
-        int insertedId = aluno.editar(aluno);
+        int insertedId = AlunoDAO.getInstance().editar(aluno);
         model.addRow(new Object[]{insertedId, aluno.getNome(), aluno.getCpf(), aluno.getEndereco(), aluno.getIdade(), aluno.getMensalidade()});
     }
       
@@ -147,7 +146,7 @@ public class FrmAluno extends javax.swing.JFrame {
         aux++;
         aluno.setId(aux);
         System.out.println("auxiliar" + aux);
-        aluno.editar(aluno);
+        AlunoDAO.getInstance().editar(aluno);
   
     }
       public void delete(int row) throws SQLException {
@@ -165,7 +164,7 @@ public class FrmAluno extends javax.swing.JFrame {
             Aluno aluno = new Aluno();
             DefaultTableModel model = (DefaultTableModel) this.tblAluno.getModel();
             //int x = Integer.parseInt((String) this.tblAluno.getValueAt(row, 0));
-            aluno.deletar((Integer) this.tblAluno.getValueAt(row, 0));
+            AlunoDAO.getInstance().deletar((Integer) this.tblAluno.getValueAt(row, 0));
             int[] rows = tblAluno.getSelectedRows();
             for (int i = 0; i < rows.length; i++) {
                 model.removeRow(rows[i] - i);

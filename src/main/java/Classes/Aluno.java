@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat;
  */
 public class Aluno {
     
-    private String tabelaNome = "tbl_aluno";
+   
     private int id;
     private String nome;
     private String cpf;
@@ -88,54 +88,7 @@ public class Aluno {
         this.id = id;
     }
     
-    public ResultSet index() throws SQLException {
-        PreparedStatement ps = Conexao.connection().prepareStatement(String.format("SELECT * FROM %s", tabelaNome));
-        ResultSet rs = ps.executeQuery();
-
-        return rs;
-    }
     
-    public ResultSet deletar(Integer id) throws SQLException {
-        PreparedStatement ps = Conexao.connection().prepareStatement("DELETE FROM tbl_aluno WHERE id_aluno = ?");
-        ps.setInt(1, id);
-
-        ps.executeUpdate();
-        return null;
-    }
-
-    public int editar(Aluno aluno) throws SQLException, ParseException {
-        PreparedStatement ps = null;
-        System.out.println("aluno" + aluno.getId( ));
-        try {
-            if (aluno.getId() == 0) {
-                ps = Conexao.connection().prepareStatement("INSERT INTO tbl_aluno (nome, cpf, endereco, idade, mensalidade) VALUES(?, ?, ?, ?, ?)");
-                ps.setString(1, aluno.getNome());
-                ps.setString(2, aluno.getCpf());
-
-                ps.setString(3, aluno.getEndereco());
-                ps.setInt(4, aluno.getIdade());
-                ps.setFloat(5, aluno.getMensalidade());
-            } else {
-                ps = Conexao.connection().prepareStatement("UPDATE tbl_aluno SET nome = ?, cpf = ?, endereco = ?, idade = ?, mensalidade = ? WHERE id_aluno = ?");
-                ps.setString(1, aluno.getNome());
-                ps.setString(2, aluno.getCpf());
-                ps.setString(3, aluno.getEndereco());
-                ps.setInt(4, aluno.getIdade());
-                ps.setFloat(5, aluno.getMensalidade());
-                ps.setInt(6, aluno.getId());
-            }
-
-        } catch (SQLException e) {
-            System.out.println(e + "error");
-        }
-        ps.executeUpdate();
-        ResultSet rs = ps.getGeneratedKeys();
-        int idx = 0;
-        if (rs.next()) {
-            idx = rs.getInt(1);
-        }
-        return idx;
-    }
      
     
 }

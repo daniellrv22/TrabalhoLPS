@@ -6,7 +6,7 @@
 package Interfaces;
 
 
-import Classes.Aluno;
+import dao.AtendenteDAO;
 import Classes.Atendente;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -72,7 +72,7 @@ public class FrmAtendente extends javax.swing.JFrame {
     
      public void carregarTabela() throws SQLException{
           
-         Atendente a = new Atendente();
+         AtendenteDAO a = new AtendenteDAO();
          ResultSet data = a.index();
           
          DefaultTableModel model = (DefaultTableModel) this.tblAtendente.getModel();
@@ -133,7 +133,7 @@ public class FrmAtendente extends javax.swing.JFrame {
       public void add(Atendente atendente) throws SQLException, ParseException {
         DefaultTableModel model = (DefaultTableModel) this.tblAtendente.getModel();
         atendente.setId(0);
-        int insertedId = atendente.editar(atendente);
+        int insertedId = AtendenteDAO.getInstance().editar(atendente);
         model.addRow(new Object[]{insertedId, atendente.getNome(), atendente.getCpf(), atendente.getEndereco(), atendente.getIdade(), atendente.getSalario()});
     }
       
@@ -147,7 +147,7 @@ public class FrmAtendente extends javax.swing.JFrame {
         aux++;
         atendente.setId(aux);
         System.out.println("auxiliar" + aux);
-        atendente.editar(atendente);
+        AtendenteDAO.getInstance().editar(atendente);
   
     }
       public void delete(int row) throws SQLException {
@@ -166,7 +166,7 @@ public class FrmAtendente extends javax.swing.JFrame {
             DefaultTableModel model = (DefaultTableModel) this.tblAtendente.getModel();
             //int x = Integer.parseInt((String) this.tblAtendente.getValueAt(row, 0));
             
-            atendente.deletar((Integer) this.tblAtendente.getValueAt(row, 0));
+            AtendenteDAO.getInstance().deletar((Integer) this.tblAtendente.getValueAt(row, 0));
             int[] rows = tblAtendente.getSelectedRows();
             for (int i = 0; i < rows.length; i++) {
                 model.removeRow(rows[i] - i);

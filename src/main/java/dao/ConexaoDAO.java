@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Classes;
+package dao;
 
-import java.sql.Connection;
+
+import com.mysql.jdbc.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -13,26 +14,26 @@ import java.sql.SQLException;
  *
  * @author Pichau
  */
-public class Conexao {
+public class ConexaoDAO {
     
-    private static Connection conn = null;
+    private static java.sql.Connection conn = null;
 
-    private Conexao() throws SQLException {
+    private ConexaoDAO() throws SQLException {
         String url = "jdbc:mysql://localhost:3306/academia";
         String user = "root";
         String pass = "";
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            conn = (Connection) DriverManager.getConnection(url, user, pass);
+            conn = (java.sql.Connection) DriverManager.getConnection(url, user, pass);
             System.out.println("New connection");
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static Connection connection() throws SQLException {
+    public static java.sql.Connection connection() throws SQLException {
         if(conn == null)
-            new Conexao();
+            new ConexaoDAO();
         return conn;
     }
     
