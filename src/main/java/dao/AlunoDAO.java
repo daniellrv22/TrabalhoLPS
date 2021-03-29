@@ -5,7 +5,7 @@
  */
 package dao;
 
-import Classes.Aluno;
+import Model.Aluno;
 import dao.ConexaoDAO;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

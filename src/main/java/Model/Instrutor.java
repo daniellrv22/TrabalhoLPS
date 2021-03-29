@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Classes;
+package Model;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,20 +14,15 @@ import java.text.ParseException;
  *
  * @author Pichau
  */
-public class Nutricionista {
-   
+public class Instrutor {
     private int id;
     private String nome;
     private String cpf;
     private String endereco;
     private int idade;
     private float salario;
-    
-     public Nutricionista() {
-        
-    }
 
-    public Nutricionista(int id, String nome, String cpf, String endereco, int idade, float salario) {
+    public Instrutor(int id, String nome, String cpf, String endereco, int idade, float salario) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
@@ -36,6 +31,10 @@ public class Nutricionista {
         this.salario = salario;
     }
     
+    
+    public Instrutor() {
+   
+    }
 
     public String getNome() {
         return nome;
@@ -84,5 +83,4 @@ public class Nutricionista {
     public void setId(int id) {
         this.id = id;
     }
-
 }

@@ -6,8 +6,10 @@
 package Interfaces;
 
 
+
+import Controller.AtendenteController;
 import dao.AtendenteDAO;
-import Classes.Atendente;
+import Model.Atendente;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -72,8 +74,9 @@ public class FrmAtendente extends javax.swing.JFrame {
     
      public void carregarTabela() throws SQLException{
           
-         AtendenteDAO a = new AtendenteDAO();
-         ResultSet data = a.index();
+         AtendenteController controller = new AtendenteController();
+         
+         ResultSet data = controller.index();
           
          DefaultTableModel model = (DefaultTableModel) this.tblAtendente.getModel();
          
@@ -130,27 +133,28 @@ public class FrmAtendente extends javax.swing.JFrame {
           }
       }
       
-      public void add(Atendente atendente) throws SQLException, ParseException {
+      public void add(String nome, String cpf, String endereco, int idade, float salario) throws SQLException, ParseException {
         DefaultTableModel model = (DefaultTableModel) this.tblAtendente.getModel();
-        atendente.setId(0);
-        int insertedId = AtendenteDAO.getInstance().editar(atendente);
-        model.addRow(new Object[]{insertedId, atendente.getNome(), atendente.getCpf(), atendente.getEndereco(), atendente.getIdade(), atendente.getSalario()});
-    }
+        AtendenteController controller = new AtendenteController();
+        int insertedId = controller.salvar(0, nome ,cpf ,endereco ,idade ,salario);
+        model.addRow(new Object[]{insertedId, nome, cpf, endereco, idade, salario});
+        
+      }
       
-      public void edit(Atendente atendente) throws SQLException, ParseException {
-        this.tblAtendente.setValueAt(atendente.getNome(), row, 1);
-        this.tblAtendente.setValueAt(atendente.getCpf(), row, 2);
-        this.tblAtendente.setValueAt(atendente.getEndereco(), row, 3);
-        this.tblAtendente.setValueAt(atendente.getIdade(), row, 4);
-        this.tblAtendente.setValueAt(atendente.getSalario(), row, 5);
-        int aux = atendente.getId();
-        aux++;
-        atendente.setId(aux);
-        System.out.println("auxiliar" + aux);
-        AtendenteDAO.getInstance().editar(atendente);
+      public void edit(String nome, String cpf, String endereco, int idade, float salario) throws SQLException, ParseException {
+        AtendenteController controller = new AtendenteController();
+        int x = Integer.parseInt((String) this.tblAtendente.getValueAt(row, 0));
+        controller.salvar(x ,nome ,cpf ,endereco ,idade ,salario);
+          
+        this.tblAtendente.setValueAt(nome, row, 1);
+        this.tblAtendente.setValueAt(cpf, row, 2);
+        this.tblAtendente.setValueAt(endereco, row, 3);
+        this.tblAtendente.setValueAt(idade, row, 4);
+        this.tblAtendente.setValueAt(salario, row, 5);
   
     }
       public void delete(int row) throws SQLException {
+        AtendenteController controller = new AtendenteController();
         Object[] options = {"Sim, remover", "Cancelar!"};
         int n = JOptionPane.showOptionDialog(this,
                 "Tem certeza que deseja excluir o usuário?",
@@ -162,11 +166,10 @@ public class FrmAtendente extends javax.swing.JFrame {
                 options[0]);
 
         if (n == JOptionPane.YES_OPTION) {
-            Atendente atendente = new Atendente();
-            DefaultTableModel model = (DefaultTableModel) this.tblAtendente.getModel();
-            //int x = Integer.parseInt((String) this.tblAtendente.getValueAt(row, 0));
             
-            AtendenteDAO.getInstance().deletar((Integer) this.tblAtendente.getValueAt(row, 0));
+            DefaultTableModel model = (DefaultTableModel) this.tblAtendente.getModel();
+            int x = Integer.parseInt((String) this.tblAtendente.getValueAt(row, 0));
+            controller.delete(x);
             int[] rows = tblAtendente.getSelectedRows();
             for (int i = 0; i < rows.length; i++) {
                 model.removeRow(rows[i] - i);
@@ -185,7 +188,6 @@ public class FrmAtendente extends javax.swing.JFrame {
         btnEditar = new javax.swing.JButton();
         btnSalvar = new javax.swing.JButton();
         btnExcluir = new javax.swing.JButton();
-        btnBuscar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         pnlForm = new javax.swing.JPanel();
         edtId = new javax.swing.JTextField();
@@ -202,6 +204,7 @@ public class FrmAtendente extends javax.swing.JFrame {
         edtEndereco = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblAtendente = new javax.swing.JTable();
+        btnVoltar = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -256,14 +259,6 @@ public class FrmAtendente extends javax.swing.JFrame {
             }
         });
 
-        btnBuscar.setText("Buscar");
-        btnBuscar.setPreferredSize(new java.awt.Dimension(75, 30));
-        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscarActionPerformed(evt);
-            }
-        });
-
         btnCancelar.setText("Cancelar");
         btnCancelar.setPreferredSize(new java.awt.Dimension(75, 30));
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
@@ -288,6 +283,12 @@ public class FrmAtendente extends javax.swing.JFrame {
 
         lblEndereco.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblEndereco.setText("Endereço");
+
+        edtCpf.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                edtCpfFocusLost(evt);
+            }
+        });
 
         lblCpf.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblCpf.setText("CPF");
@@ -365,6 +366,14 @@ public class FrmAtendente extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(tblAtendente);
 
+        btnVoltar.setText("Voltar");
+        btnVoltar.setPreferredSize(new java.awt.Dimension(75, 30));
+        btnVoltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVoltarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -385,10 +394,10 @@ public class FrmAtendente extends javax.swing.JFrame {
                                         .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
                                         .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(65, 65, 65)
                                 .addComponent(lblTitulo)))
@@ -407,8 +416,8 @@ public class FrmAtendente extends javax.swing.JFrame {
                     .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addComponent(pnlForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -443,9 +452,9 @@ public class FrmAtendente extends javax.swing.JFrame {
         if (this.edtNome.getText().isEmpty() || this.edtCpf.getText().isEmpty()|| this.edtEndereco.getText().isEmpty()|| this.edtIdade.getText().isEmpty()|| this.edtSalario.getText().isEmpty()) {
                     showMessageDialog(this, "Por favor, preencha todos os campos!");
                 } else if (this.selectedId == 0) { //create
-                    Atendente atendente = new Atendente(id++, this.edtNome.getText(), this.edtCpf.getText(), this.edtEndereco.getText(), Integer.parseInt(edtIdade.getText()), Integer.parseInt(edtSalario.getText()));
+                
                     try {
-                add(atendente);
+                add(this.edtNome.getText(), this.edtCpf.getText(), this.edtEndereco.getText(), Integer.parseInt(edtIdade.getText()), Integer.parseInt(edtSalario.getText()));
                     } catch (SQLException ex) {
                         Logger.getLogger(FrmAtendente.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ParseException ex) {
@@ -454,9 +463,9 @@ public class FrmAtendente extends javax.swing.JFrame {
                     showMessageDialog(this, "Registro adicionado com sucesso!");
             this.limparCampos();
                 } else { //update
-                    Atendente atendente = new Atendente(this.selectedId, this.edtNome.getText(), this.edtCpf.getText(), this.edtEndereco.getText(),Integer.parseInt(edtIdade.getText()), Integer.parseInt(edtSalario.getText()));
+                    
                     try {
-                        edit(atendente);
+                        edit(this.edtNome.getText(), this.edtCpf.getText(), this.edtEndereco.getText(), Integer.parseInt(edtIdade.getText()), Integer.parseInt(edtSalario.getText()));
                     } catch (SQLException ex) {
                         Logger.getLogger(FrmAtendente.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ParseException ex) {
@@ -484,14 +493,20 @@ public class FrmAtendente extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnExcluirActionPerformed
 
-    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-     
-    }//GEN-LAST:event_btnBuscarActionPerformed
-
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
        this.limparCampos();
         this.habilitarCampos(false);
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void edtCpfFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_edtCpfFocusLost
+       if(verificarCPF(edtCpf.getText())== false){
+            showMessageDialog(this, "Digite um cpf valido!");
+        };
+    }//GEN-LAST:event_edtCpfFocusLost
+
+    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+       this.dispose();
+    }//GEN-LAST:event_btnVoltarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -535,12 +550,12 @@ public class FrmAtendente extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnNovo;
     private javax.swing.JButton btnSalvar;
+    private javax.swing.JButton btnVoltar;
     private javax.swing.JFormattedTextField edtCpf;
     private javax.swing.JTextField edtEndereco;
     private javax.swing.JTextField edtId;

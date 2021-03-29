@@ -6,7 +6,7 @@
 package dao;
 
 import dao.ConexaoDAO;
-import Classes.Nutricionista;
+import Model.Nutricionista;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -6,7 +6,7 @@
 package dao;
 
 import dao.ConexaoDAO;
-import Classes.Instrutor;
+import Model.Instrutor;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -5,7 +5,7 @@
  */
 package dao;
 
-import Classes.Atendente;
+import Model.Atendente;
 import dao.ConexaoDAO;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
